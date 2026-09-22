@@ -1,5 +1,5 @@
 #!/bin/bash
-DB="/home/youcef/.local/state/openusage/telemetry.db"
+DB="$HOME/.local/state/openusage/telemetry.db"
 RESULT=$(sqlite3 -separator ' ' "$DB" "SELECT provider_id, COUNT(*) FROM usage_events GROUP BY provider_id ORDER BY COUNT(*) DESC LIMIT 1;" 2>/dev/null)
 provider=$(echo "$RESULT" | awk '{print $1}')
 count=$(echo "$RESULT" | awk '{print $2}')
