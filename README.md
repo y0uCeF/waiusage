@@ -19,4 +19,4 @@ Add to `~/.config/waybar/config`:
   "format": "★ {text}"
 }
 ```
-Then `waybar` will show `openrouter:27` etc! ♪
+Then `waybar` will show `openrouter:27` etc! Refresh with `killall -SIGUSR2 waybar` or restart it. ♪
