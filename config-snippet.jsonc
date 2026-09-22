@@ -1,8 +1,13 @@
-// Add to ~/.config/waybar/config modules-right/left/center:
+// Waybar config snippet — add a "custom/openusage" block to ~/.config/waybar/config
+// after copying the script there (see README "Install"):
+//   cp waiusage/openusage-telemetry.sh ~/.config/waybar/
+// Optional: restrict which providers show (comma-separated, order preserved, misses skipped):
+//   "exec": "OPENUSAGE_PROVIDERS=copilot,openrouter $HOME/.config/waybar/openusage-telemetry.sh",
 "custom/openusage": {
-  "exec": "/home/youcef/Projects/waiusage/openusage-telemetry.sh",
-  "return-type": "json",
-  "interval": 60,
-  "format": "★ {text}",
-  "format-icons": {"telemetry":"✦"}
+    "exec": "$HOME/.config/waybar/openusage-telemetry.sh",
+    "return-type": "json",
+    "interval": 300,
+    "signal": 4,             // listen for SIGRTMIN+4: toggle a live refresh via pkill -RTMIN+4
+    "format": "{}",
+    "tooltip": true
 }
