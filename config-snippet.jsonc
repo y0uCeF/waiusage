@@ -1,0 +1,8 @@
+// Add to ~/.config/waybar/config modules-right/left/center:
+"custom/openusage": {
+  "exec": "/home/youcef/Projects/waiusage/openusage-telemetry.sh",
+  "return-type": "json",
+  "interval": 60,
+  "format": "★ {text}",
+  "format-icons": {"telemetry":"✦"}
+}
