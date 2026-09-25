@@ -69,7 +69,8 @@ def fmt(v, decimals):
     v = float(v)
     if decimals == 0:
         return str(int(round(v)))
-    return f"{v:.{decimals}f}"       # currency: keep the full precision, don't strip zeros
+    s = f"{v:.{decimals}f}"
+    return s.rstrip("0").rstrip(".")   # drop trailing .00 -> "10", keep "5.59"
 
 def ndigits(unit):
     """Quota-like units are whole numbers; money keeps 2 decimal places."""
