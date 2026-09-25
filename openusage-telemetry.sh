@@ -69,13 +69,12 @@ def fmt(v, decimals):
     v = float(v)
     if decimals == 0:
         return str(int(round(v)))
-    s = f"{v:.{decimals}f}"
-    return s.rstrip("0").rstrip(".")
+    return f"{v:.{decimals}f}"       # currency: keep the full precision, don't strip zeros
 
 def ndigits(unit):
-    """Quota-like units are whole numbers; money keeps 1 decimal."""
+    """Quota-like units are whole numbers; money keeps 2 decimal places."""
     return 0 if (unit or "").lower() in (
-        "requests", "interactions", "tokens", "sessions", "calls", "messages") else 1
+        "requests", "interactions", "tokens", "sessions", "calls", "messages") else 2
 
 def current_total(m, kind):
     """Return (current, total) strings for a metric dict."""
@@ -122,16 +121,21 @@ def tooltip_note(prov):
     return ""
 
 names, widgets, tips = [], [], []
+degraded = False
 for prov in order:
     cfg = METRICS.get(prov)
-    if not cfg:
-        continue               # unknown provider (not in METRICS) or absent from telemetry
+    if not cfg or prov not in snaps:
+        continue            # unknown provider, or absent from this telemetry snapshot
     key, kind = cfg
+    icon, disp = META.get(prov, (prov, prov))
     m = (snaps[prov].get("metrics") or {}).get(key) or {}
     cur, tot = current_total(m, kind)
     if not cur:
+        degraded = True     # present but unusable (e.g. AUTH_REQUIRED, no metric) -> flag it
+        names.append(f"{prov}: ⚠")
+        widgets.append(f"{icon} ⚠".strip())
+        tips.append(f"{disp}: {snaps[prov].get('status') or 'unavailable'}")
         continue
-    icon, disp = META.get(prov, (prov, prov))
     unit = (m.get("unit") or "").lower()
     val = f"{cur}/{tot}" if tot and tot != cur else f"{cur}"
     names.append(f"{prov}: {val}")
@@ -144,9 +148,10 @@ for prov in order:
         t += f" · {note}"
     tips.append(t)
 
+css_class = "openusage warning" if degraded else "openusage"
 if plain:
     for ln in names:
         print(ln)
 else:
-    print(json.dumps({"text": "  ·  ".join(widgets), "class": "openusage", "tooltip": "\n".join(tips)}))
+    print(json.dumps({"text": "  ·  ".join(widgets), "class": css_class, "tooltip": "\n".join(tips)}))
 PY
